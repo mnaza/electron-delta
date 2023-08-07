@@ -127,6 +127,40 @@ const DeltaBuilder = {
         console.log('Adding Macos updater helper binaries ', deltaInstallerFilesMac);
         buildFiles.push(...macOSBinaries);
       }
+
+      if (platformName === 'linux') {
+        // create delta for linux
+        const targets = context.platformToTargets.get(platform);
+        const target = targets.entries().next().value[0];
+        console.log('Only first target name is taken: ', target);
+        const {
+          latestReleaseFilePath,
+          latestReleaseFileName,
+        } = getLatestReleaseInfo({
+          artifactPaths,
+          platform: platformName,
+          target,
+        });
+        const deltaInstallerFilesWindows = await createAllDeltas({
+          platform: platformName,
+          outDir,
+          logger,
+          cacheDir,
+          target,
+          getPreviousReleases,
+          sign,
+          productIconPath,
+          productName,
+          processName,
+          latestReleaseFilePath,
+          latestReleaseFileName,
+          latestVersion,
+        });
+        if (deltaInstallerFilesWindows && deltaInstallerFilesWindows.length) {
+          buildFiles.push(...deltaInstallerFilesWindows);
+        }
+      }
+
     }
     console.debug('Created delta files', buildFiles);
     return buildFiles;

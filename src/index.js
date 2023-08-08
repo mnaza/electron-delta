@@ -26,6 +26,9 @@ const getLatestReleaseInfo = ({ artifactPaths, platform, target }) => {
     if (platform === 'mac') {
       return d.endsWith('.zip');
     }
+    if (platform === 'linux' && target === 'appimage') {
+      return d.endsWith('.AppImage') || d.endsWith('.appimage');
+    }
     return false;
   })[0];
 
